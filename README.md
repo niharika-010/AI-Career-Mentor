@@ -4,6 +4,34 @@
 
 ---
 
+## 📸 Application Screenshots
+
+### 1. Candidate Dashboard & Career Overview
+
+![Candidate Dashboard](Screenshots/01_dashboard.png)
+
+### 2. Resume Upload & Target Role Selection
+
+![Resume Upload & Match Screening](Screenshots/02_match_screening.png)
+
+### 3. Deterministic 8-Category Match Score Matrix
+
+![Match Score & Evidence Matrix](Screenshots/03_analysis_details.png)
+
+### 4. ATS Formatting Rule & Parser Compliance Inspector
+
+![ATS Formatting Checker](Screenshots/04_ats_checker.png)
+
+### 5. Side-by-Side AI Resume Bullet Rewriter
+
+![AI Resume Rewriter](Screenshots/05_resume_rewriter.png)
+
+### 6. Recruiter Candidate Management Dashboard
+
+![Recruiter Dashboard](Screenshots/06_recruiter_dashboard.png)
+
+---
+
 ## 🚀 Quick Start Guide
 
 Follow these 5 simple steps to get the full application up and running locally using Docker:
