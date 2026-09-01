@@ -1,0 +1,8 @@
+{
+  "venvPath": "d:/AI Career Mentor/backend",
+  "venv": ".venv",
+  "extraPaths": [
+    "d:/AI Career Mentor/backend",
+    "d:/AI Career Mentor/backend/.venv/Lib/site-packages"
+  ]
+}

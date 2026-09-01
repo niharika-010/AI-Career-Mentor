@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { UploadCloud, FileText, CheckCircle2, AlertTriangle, X, Bug } from "lucide-react";
+import { UploadCloud, FileText, CheckCircle2, AlertTriangle, X, Bug, Loader2 } from "lucide-react";
 
 interface DropzoneProps {
   accept?: string;
   maxSizeBytes?: number; // default 10MB
+  uploadProgress?: number | null;
   onFileSelect: (file: File) => void;
   label?: string;
   description?: string;
@@ -14,6 +15,7 @@ interface DropzoneProps {
 export const Dropzone: React.FC<DropzoneProps> = ({
   accept = ".pdf,.docx",
   maxSizeBytes = 10 * 1024 * 1024,
+  uploadProgress = null,
   onFileSelect,
   label = "Upload Resume or Document",
   description = "PDF or DOCX format (Max size: 10 MB)",
@@ -23,18 +25,23 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const allowedExtensions = accept
+    .split(",")
+    .map((ext) => ext.trim().toLowerCase().replace(".", ""));
+
   const handleFile = (file: File) => {
     setError(null);
 
-    const extension = file.name.split(".").pop()?.toLowerCase();
-    if (extension !== "pdf" && extension !== "docx") {
-      setError("⚠ Unsupported file type. Please upload a PDF or DOCX file.");
+    const extension = file.name.split(".").pop()?.toLowerCase() || "";
+    if (!allowedExtensions.includes(extension)) {
+      setError(`⚠ Unsupported file type '.${extension}'. Please upload ${accept.toUpperCase()} files.`);
       setSelectedFile(null);
       return;
     }
 
     if (file.size > maxSizeBytes) {
-      setError("⚠ File size exceeds 10 MB limit. Please upload a smaller PDF or DOCX file.");
+      const maxMb = (maxSizeBytes / (1024 * 1024)).toFixed(0);
+      setError(`⚠ File size exceeds ${maxMb} MB limit. Please upload a smaller file.`);
       setSelectedFile(null);
       return;
     }
@@ -65,7 +72,6 @@ export const Dropzone: React.FC<DropzoneProps> = ({
     }
   };
 
-  // Helper for QA testing invalid file error
   const triggerInvalidFileTest = (e: React.MouseEvent) => {
     e.stopPropagation();
     const fakeInvalidFile = new File(["fake content"], "invalid_image.png", { type: "image/png" });
@@ -120,6 +126,25 @@ export const Dropzone: React.FC<DropzoneProps> = ({
         </div>
       </div>
 
+      {/* Upload Progress Bar */}
+      {uploadProgress !== null && (
+        <div className="p-4 rounded-xl glass-card border border-purple-500/30 space-y-2">
+          <div className="flex items-center justify-between text-xs text-slate-300">
+            <span className="flex items-center space-x-2 font-semibold">
+              <Loader2 className="w-4 h-4 text-purple-400 animate-spin" />
+              <span>Uploading & Parsing Document...</span>
+            </span>
+            <span className="font-bold text-purple-400">{uploadProgress}%</span>
+          </div>
+          <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+            <div
+              className="bg-gradient-to-r from-purple-500 to-indigo-500 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${uploadProgress}%` }}
+            />
+          </div>
+        </div>
+      )}
+
       {error && (
         <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/40 flex items-center space-x-3 text-rose-300 text-xs font-semibold shadow-lg shadow-rose-500/5 animate-pulse">
           <AlertTriangle className="w-5 h-5 text-rose-400 flex-shrink-0" />
@@ -127,7 +152,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
         </div>
       )}
 
-      {selectedFile && (
+      {selectedFile && uploadProgress === null && (
         <div className="p-4 rounded-xl glass-card border border-purple-500/30 flex items-center justify-between">
           <div className="flex items-center space-x-3 min-w-0">
             <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center flex-shrink-0">
@@ -141,7 +166,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
           <div className="flex items-center space-x-2">
             <span className="flex items-center space-x-1 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/30">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Ready</span>
+              <span>Selected</span>
             </span>
             <button
               onClick={(e) => {

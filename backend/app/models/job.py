@@ -1,6 +1,6 @@
 import uuid
 from typing import List, Dict, Any, TYPE_CHECKING
-from sqlalchemy import String, Text, ForeignKey, JSON
+from sqlalchemy import String, Text, ForeignKey, JSON, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -43,6 +43,27 @@ class JobDescription(Base, TimestampMixin):
     parsed_requirements: Mapped[Dict[str, Any]] = mapped_column(
         JSON,
         default=dict,
+        nullable=False,
+    )
+    file_name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=True,
+    )
+    file_path: Mapped[str] = mapped_column(
+        String(512),
+        nullable=True,
+    )
+    file_type: Mapped[str] = mapped_column(
+        String(50),
+        nullable=True,
+    )
+    file_size_bytes: Mapped[int] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+    scan_status: Mapped[str] = mapped_column(
+        String(50),
+        default="CLEAN",
         nullable=False,
     )
 

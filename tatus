@@ -1,0 +1,24 @@
+ .vscode/settings.json                              |  12 [32m+[m[31m-[m
+ backend/app/api/v1/router.py                       |   7 [32m+[m[31m-[m
+ backend/app/core/config.py                         |   4 [32m+[m
+ backend/app/models/analysis.py                     |  25 [32m+[m[31m-[m
+ backend/app/models/job.py                          |  23 [32m+[m[31m-[m
+ backend/app/models/resume.py                       |   5 [32m+[m
+ backend/requirements.txt                           |   3 [32m+[m
+ docker-compose.yml                                 |  33 [32m++[m
+ frontend/app/(dashboard)/analysis/[id]/page.tsx    | 192 [32m+++++[m[31m-----[m
+ frontend/app/(dashboard)/analyze/page.tsx          | 324 [32m++++++++++++++[m[31m---[m
+ frontend/app/(dashboard)/ats-checker/page.tsx      | 193 [32m++++++++[m[31m---[m
+ frontend/app/(dashboard)/history/page.tsx          | 218 [32m++++++[m[31m------[m
+ frontend/app/(dashboard)/interview-prep/page.tsx   | 279 [32m++++++++++++[m[31m---[m
+ frontend/app/(dashboard)/jobs/page.tsx             | 385 [32m+++++++++++++++[m[31m------[m
+ frontend/app/(dashboard)/recommendations/page.tsx  | 321 [32m++++++++++++++[m[31m---[m
+ frontend/app/(dashboard)/recruiter/page.tsx        | 241 [32m+++++++[m[31m------[m
+ frontend/app/(dashboard)/resumes/page.tsx          | 277 [32m++++++++++[m[31m-----[m
+ frontend/app/(dashboard)/rewriter/page.tsx         | 335 [32m++++++++++++[m[31m------[m
+ frontend/app/(dashboard)/skill-gap/page.tsx        | 302 [32m+++++++++++++[m[31m---[m
+ frontend/app/globals.css                           |   1 [32m+[m
+ frontend/components/ui/Dropzone.tsx                |  41 [32m++[m[31m-[m
+ .../components/visualizers/CategoryProgressBar.tsx |  10 [32m+[m[31m-[m
+ frontend/components/visualizers/ScoreRing.tsx      |  15 [32m+[m[31m-[m
+ 23 files changed, 2379 insertions(+), 867 deletions(-)

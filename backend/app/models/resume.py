@@ -48,6 +48,11 @@ class Resume(Base, TimestampMixin):
         default=dict,
         nullable=False,
     )
+    scan_status: Mapped[str] = mapped_column(
+        String(50),
+        default="CLEAN",
+        nullable=False,
+    )
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="resumes")

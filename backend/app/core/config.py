@@ -18,6 +18,10 @@ class Settings(BaseSettings):
 
     # Database
     DATABASE_URL: str = "sqlite+aiosqlite:///./career.db"
+
+    # File Storage & Uploads
+    UPLOAD_DIR: str = "uploads"
+    MAX_UPLOAD_SIZE_MB: int = 10
     
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"

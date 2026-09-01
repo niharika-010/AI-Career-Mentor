@@ -1,0 +1,17 @@
+{
+  "executionEnvironments": [
+    {
+      "root": "backend",
+      "extraPaths": [
+        "d:/AI Career Mentor/backend",
+        "d:/AI Career Mentor/backend/.venv/Lib/site-packages"
+      ]
+    }
+  ],
+  "venvPath": "backend",
+  "venv": ".venv",
+  "extraPaths": [
+    "d:/AI Career Mentor/backend",
+    "d:/AI Career Mentor/backend/.venv/Lib/site-packages"
+  ]
+}

@@ -4,31 +4,32 @@ import React from "react";
 import { motion } from "framer-motion";
 
 interface ScoreRingProps {
-  score: number; // 0 to 100
+  score?: number; // 0 to 100
   size?: number; // ring dimension in px
   strokeWidth?: number;
   label?: string;
 }
 
 export const ScoreRing: React.FC<ScoreRingProps> = ({
-  score,
+  score = 0,
   size = 180,
   strokeWidth = 14,
   label = "Overall Match Score",
 }) => {
+  const safeScore = typeof score === "number" && !isNaN(score) ? score : 0;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (score / 100) * circumference;
+  const strokeDashoffset = circumference - (safeScore / 100) * circumference;
 
   let strokeColor = "stroke-emerald-400";
   let textColor = "text-emerald-400";
   let bgGlow = "shadow-emerald-500/20";
 
-  if (score < 60) {
+  if (safeScore < 60) {
     strokeColor = "stroke-rose-400";
     textColor = "text-rose-400";
     bgGlow = "shadow-rose-500/20";
-  } else if (score < 75) {
+  } else if (safeScore < 75) {
     strokeColor = "stroke-amber-400";
     textColor = "text-amber-400";
     bgGlow = "shadow-amber-500/20";
@@ -65,10 +66,10 @@ export const ScoreRing: React.FC<ScoreRingProps> = ({
         {/* Score Value Center */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className={`text-4xl font-extrabold tracking-tight ${textColor}`}>
-            {score.toFixed(1)}%
+            {safeScore.toFixed(1)}%
           </span>
           <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-0.5">
-            {score >= 75 ? "Strong Match" : score >= 60 ? "Moderate Match" : "Low Match"}
+            {safeScore >= 75 ? "Strong Match" : safeScore >= 60 ? "Moderate Match" : "Low Match"}
           </span>
         </div>
       </div>

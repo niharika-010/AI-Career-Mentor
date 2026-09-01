@@ -1,131 +1,158 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Users, Filter, ArrowUpRight, Upload, Sparkles, CheckCircle2 } from "lucide-react";
+import { Users, Info, ShieldCheck, ArrowUpRight, CheckCircle2, AlertCircle, XCircle } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { Dropzone } from "@/components/ui/Dropzone";
-import { useToast } from "@/components/ui/Toast";
+import { getRecruiterCandidates, RecruiterCandidate } from "@/lib/api/recruiter";
 
 export default function RecruiterPage() {
-  const { toast } = useToast();
-  const [minScore, setMinScore] = useState(70);
+  const [candidates, setCandidates] = useState<RecruiterCandidate[]>([]);
+  const [disclaimer, setDisclaimer] = useState("Resume-to-role alignment estimate.");
+  const [jobTitle, setJobTitle] = useState("Machine Learning Engineer");
+  const [isLoading, setIsLoading] = useState(true);
 
-  const candidates = [
-    { id: "cand-1", name: "Sarah Jenkins", email: "sarah@example.com", score: 87.5, skills_count: 14, yoe: 6.5, status: "Shortlisted" },
-    { id: "cand-2", name: "Michael Chang", email: "michael@example.com", score: 78.0, skills_count: 9, yoe: 4.0, status: "Under Review" },
-    { id: "cand-3", name: "Elena Rostova", email: "elena@example.com", score: 91.2, skills_count: 18, yoe: 7.0, status: "Top Applicant" },
-    { id: "cand-4", name: "David Kim", email: "david@example.com", score: 62.4, skills_count: 6, yoe: 2.5, status: "Unsuitable" },
-  ];
+  useEffect(() => {
+    async function loadData() {
+      setIsLoading(true);
+      try {
+        const res = await getRecruiterCandidates();
+        setCandidates(res.candidates);
+        if (res.disclaimer) setDisclaimer(res.disclaimer);
+        if (res.job_title) setJobTitle(res.job_title);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadData();
+  }, []);
 
-  const filteredCandidates = candidates.filter((c) => c.score >= minScore);
-
-  const handleBatchUpload = (file: File) => {
-    toast({ title: "Batch Resumes Uploading...", description: file.name, type: "info" });
-    setTimeout(() => {
-      toast({ title: "Batch Resumes Processed!", description: "4 candidate files parsed & scored against open job vacancy.", type: "success" });
-    }, 2000);
+  const getStatusBadge = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "strong":
+        return <Badge variant="success" className="font-extrabold px-3 py-1 text-xs">Strong</Badge>;
+      case "review":
+        return <Badge variant="warning" className="font-extrabold px-3 py-1 text-xs">Review</Badge>;
+      case "reject":
+        return <Badge variant="error" className="font-extrabold px-3 py-1 text-xs">Reject</Badge>;
+      default:
+        return <Badge variant="neutral">{status}</Badge>;
+    }
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center space-x-3">
-          <Users className="w-8 h-8 text-purple-400" />
-          <span>Recruiter Workspace & Batch Screening</span>
-        </h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Screen multiple candidate resumes simultaneously against open enterprise vacancies.
-        </p>
+    <div className="space-y-8 max-w-5xl mx-auto">
+      {/* Page Title Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center space-x-2 text-xs font-semibold text-purple-400 mb-1">
+            <Users className="w-4 h-4" />
+            <span>Recruiter Batch Screening Workspace</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Candidates
+          </h1>
+          <p className="text-xs text-slate-400 mt-1">
+            Deterministic candidate alignment evaluation against open target role: <span className="text-purple-300 font-semibold">{jobTitle}</span>
+          </p>
+        </div>
       </div>
 
-      {/* Batch Upload Dropzone */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Batch Resume Upload</CardTitle>
-          <CardDescription>Upload ZIP or multiple PDF candidate resumes to execute automated batch scoring.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Dropzone onFileSelect={handleBatchUpload} label="Upload Multiple Resumes (ZIP / PDF)" />
-        </CardContent>
+      {/* Mandatory Ethical Wording Guardrail Notice */}
+      <Card className="border-purple-500/40 bg-purple-950/20 p-5">
+        <div className="flex items-start space-x-3.5">
+          <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-300 flex-shrink-0 mt-0.5">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <div className="space-y-1">
+            <h4 className="text-sm font-bold text-white flex items-center space-x-2">
+              <span>Ethical AI Compliance Notice</span>
+              <span className="text-[10px] font-extrabold text-purple-300 bg-purple-900/60 px-2 py-0.5 rounded-md border border-purple-700/50">
+                Resume-to-role alignment estimate
+              </span>
+            </h4>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              This dashboard provides a <span className="font-bold text-white">Resume-to-role alignment estimate</span> based on skill overlap, canonical entity parsing, and ATS formatting rules. <span className="text-purple-200 font-medium">It does not predict hiring outcomes or replace human candidate evaluation.</span>
+            </p>
+          </div>
+        </div>
       </Card>
 
-      {/* Scoreboard Table */}
-      <Card className="space-y-4">
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
-          <div>
-            <CardTitle>Ranked Candidate Scoreboard</CardTitle>
-            <CardDescription>Target Vacancy: Senior AI Full Stack Engineer</CardDescription>
-          </div>
-
-          {/* Threshold Filter */}
-          <div className="flex items-center space-x-3">
-            <span className="text-xs text-slate-400 font-semibold">Min Score:</span>
-            <input
-              type="range"
-              min="50"
-              max="90"
-              value={minScore}
-              onChange={(e) => setMinScore(Number(e.target.value))}
-              className="w-32 accent-purple-500 cursor-pointer"
-            />
-            <span className="text-xs font-bold text-purple-400 w-10">{minScore}%</span>
-          </div>
+      {/* Main Candidate Alignment Table Card */}
+      <Card className="border-slate-800 bg-slate-900/60 overflow-hidden">
+        <CardHeader className="px-6 pt-5 pb-3 border-b border-slate-800/80">
+          <CardTitle className="text-lg font-bold text-white">Candidates Alignment Scoreboard</CardTitle>
+          <CardDescription>Target Role: {jobTitle}</CardDescription>
         </CardHeader>
 
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-900/80 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                  <th className="p-4">Rank & Candidate</th>
-                  <th className="p-4">Extracted YOE</th>
-                  <th className="p-4">Skills Count</th>
-                  <th className="p-4">Match Score</th>
-                  <th className="p-4">Status</th>
-                  <th className="p-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/80 text-xs">
-                {filteredCandidates.map((cand, idx) => (
-                  <tr key={cand.id} className="hover:bg-slate-900/40 transition">
-                    <td className="p-4">
-                      <div className="flex items-center space-x-3">
-                        <span className="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 font-extrabold flex items-center justify-center text-[10px]">
-                          #{idx + 1}
-                        </span>
-                        <div>
-                          <p className="font-bold text-white">{cand.name}</p>
-                          <p className="text-[10px] text-slate-400">{cand.email}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4 text-slate-300 font-semibold">{cand.yoe} Years</td>
-                    <td className="p-4 text-slate-300">{cand.skills_count} Skills</td>
-                    <td className="p-4">
-                      <Badge variant={cand.score >= 85 ? "success" : cand.score >= 70 ? "warning" : "error"}>
-                        {cand.score.toFixed(1)}% Match
-                      </Badge>
-                    </td>
-                    <td className="p-4">
-                      <span className="text-[11px] font-bold text-purple-300">{cand.status}</span>
-                    </td>
-                    <td className="p-4 text-right">
-                      <Link href={`/analysis/ans-101`}>
-                        <Button variant="glass" size="sm">
-                          <span>View Full Profile</span>
-                          <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
-                        </Button>
-                      </Link>
-                    </td>
+          {isLoading ? (
+            <div className="p-12 text-center text-xs text-slate-400 space-y-2">
+              <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto" />
+              <p>Loading candidate alignment records...</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-900/90 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <th className="py-4 px-6">Candidate</th>
+                    <th className="py-4 px-6 text-center">Match</th>
+                    <th className="py-4 px-6 text-center">ATS</th>
+                    <th className="py-4 px-6 text-center">Status</th>
+                    <th className="py-4 px-6 text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-800/80 text-sm">
+                  {candidates.map((cand) => (
+                    <tr key={cand.id} className="hover:bg-slate-800/50 transition">
+                      {/* Candidate Name */}
+                      <td className="py-4 px-6 font-bold text-white">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 rounded-full bg-purple-500/20 text-purple-300 font-extrabold flex items-center justify-center text-xs border border-purple-500/30">
+                            {cand.name.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="font-bold text-white">{cand.name}</p>
+                            <p className="text-[11px] text-slate-400 font-normal">{cand.email}</p>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Match Score */}
+                      <td className="py-4 px-6 text-center">
+                        <span className="font-extrabold text-white text-base">{cand.match_score}</span>
+                      </td>
+
+                      {/* ATS Score */}
+                      <td className="py-4 px-6 text-center">
+                        <span className="font-bold text-slate-300 text-sm">{cand.ats_score}</span>
+                      </td>
+
+                      {/* Status Badge */}
+                      <td className="py-4 px-6 text-center">
+                        {getStatusBadge(cand.status)}
+                      </td>
+
+                      {/* Actions */}
+                      <td className="py-4 px-6 text-right">
+                        <Link href="/analysis/ans-101">
+                          <Button variant="glass" size="sm">
+                            <span>View Profile</span>
+                            <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

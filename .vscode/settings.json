@@ -1,10 +1,16 @@
 {
   "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
+  "python.envFile": "${workspaceFolder}/backend/.env",
   "python.analysis.extraPaths": [
-    "${workspaceFolder}/backend"
+    "d:/AI Career Mentor/backend",
+    "${workspaceFolder}/backend",
+    "${workspaceFolder}/backend/.venv/Lib/site-packages"
   ],
   "python.autoComplete.extraPaths": [
-    "${workspaceFolder}/backend"
+    "d:/AI Career Mentor/backend",
+    "${workspaceFolder}/backend",
+    "${workspaceFolder}/backend/.venv/Lib/site-packages"
   ],
-  "python.analysis.autoSearchPaths": true
+  "python.analysis.autoSearchPaths": true,
+  "css.lint.unknownAtRules": "ignore"
 }

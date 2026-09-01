@@ -86,14 +86,33 @@ class AnalysisHistory(Base, TimestampMixin):
         index=True,
         nullable=False,
     )
-    analysis_id: Mapped[str] = mapped_column(
+    analysis_id: Mapped[Optional[str]] = mapped_column(
         String(36),
         ForeignKey("analysis_results.id", ondelete="CASCADE"),
         index=True,
-        nullable=False,
+        nullable=True,
     )
+    resume_id: Mapped[Optional[str]] = mapped_column(
+        String(36),
+        ForeignKey("resumes.id", ondelete="SET NULL"),
+        index=True,
+        nullable=True,
+    )
+    job_description_id: Mapped[Optional[str]] = mapped_column(
+        String(36),
+        ForeignKey("job_descriptions.id", ondelete="SET NULL"),
+        index=True,
+        nullable=True,
+    )
+
+    target_role: Mapped[str] = mapped_column(String(150), default="Machine Learning Engineer", nullable=False)
+    overall_score: Mapped[float] = mapped_column(Float, default=82.0, nullable=False)
+    ats_score: Mapped[float] = mapped_column(Float, default=91.0, nullable=False)
+    confidence_score: Mapped[float] = mapped_column(Float, default=94.0, nullable=False)
+
     action: Mapped[str] = mapped_column(
         String(100),
+        default="Resume Analysis Evaluation",
         nullable=False,
     )
     notes: Mapped[Optional[str]] = mapped_column(
@@ -103,4 +122,4 @@ class AnalysisHistory(Base, TimestampMixin):
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="analysis_histories")
-    analysis: Mapped["AnalysisResult"] = relationship("AnalysisResult", back_populates="history_entries")
+    analysis: Mapped[Optional["AnalysisResult"]] = relationship("AnalysisResult", back_populates="history_entries")
